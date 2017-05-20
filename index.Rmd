@@ -1,0 +1,61 @@
+---
+title: "Growth of Orange Trees"
+author: "Francesca Tantardini"
+date: "20 May 2017"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+## The dataset Orange
+The **Orange** data frame collects data about the growth of 5 orange trees. It consists of 36 observation of 3 variables: 
+
+- the tree the measurements refer to
+- the **age** (days since December 31, 1968) 
+- the **circumference** (mm).
+
+
+In the following we 
+
+- show a scatterpot of the data
+- fit a linear model with age as predictor for circumference 
+
+
+## Circumference vs Age for Trees Nr. 1 to 5
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE, fig.height=5.5}
+library(plotly)
+plot_ly(Orange, x=~age, y=~circumference, color=~Tree, type="scatter")
+```
+
+## Fitting a linear Model
+
+We fit a linear model for the outcome circumference with age as regressor 
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+fitAll<-lm(circumference~age, Orange)
+summary(fitAll)$coefficients
+```
+
+## Fitting a linear Model
+```{r, message=FALSE, warning=FALSE}
+df<-data.frame(Orange, fit=fitAll$fitted.values, res=fitAll$residuals)
+```
+```{r, message=FALSE, warning=FALSE, fig.height=5.5}
+plot_ly(df, x=~age)%>%
+    add_trace(y=~fit, mode='lines', name='linear model')%>% 
+    add_trace(y=~circumference, color=~Tree, mode='markers')%>% 
+layout(yaxis = list (title = 'Circumference (mm)'))
+```
+
+## Plot of the Residuals
+
+```{r, warning=FALSE, message=FALSE, fig.height=5.5}
+plot_ly(data.frame(age=Orange$age, res=fitAll$residuals, tree=Orange$Tree), x=~age, y=~res, type = "scatter" , color=~tree) %>%
+layout(yaxis = list (title = 'Residuals (mm)'))
+```
+
